@@ -1,9 +1,23 @@
 (function () {
-  var expect = chai.expect;
+  var root, expect;
+
+  root = this;
+  expect = chai.expect;
 
   mocha.setup({
     ui: "bdd",
     ignoreLeaks: true
+  });
+
+  beforeEach(function () {
+    this.sandbox = sinon.sandbox.create({
+      injectInto: this,
+      properties: ["spy", "stub"]
+    });
+  });
+
+  afterEach(function () {
+    this.sandbox.restore();
   });
 
   describe("Structure", function () {
@@ -13,56 +27,61 @@
 
     describe(".init", function () {
       afterEach(function () {
-        window.Structure = window.App;
-        delete window.App;
+        root.Structure = root.App;
+        delete root.App;
       });
 
       it("removes Structure from the global scope", function () {
         Structure.init("App");
 
-        expect(window).not.to.have.property("Structure");
+        expect(root).not.to.have.property("Structure");
       });
 
       it("moves Structure to the provided namespace", function () {
         Structure.init("App");
 
-        expect(window).to.have.property("App");
+        expect(root).to.have.property("App");
       });
     });
 
-    describe(".bind", function () {
-      var obj;
+    describe(".registerModule", function () {
+      afterEach(function () {
+        delete root.Foo;
+      });
 
-      beforeEach(function () {
-        obj = {
-          foo: function () {
-            return "foo";
-          },
+      it("creates new namespaces", function () {
+        Structure.registerModule("Foo.Bar.Baz");
 
-          bar: "baz"
+        expect(Foo.Bar.Baz).to.be.an("object");
+      });
+
+      it("doesn't overwrite existing namespaces", function () {
+        root.Foo = {
+          stillHere: true
         };
+
+        Structure.registerModule("Foo");
+
+        expect(root.Foo).to.have.property("stillHere");
       });
 
-      it("wraps functions in a function setting the correct context", function () {
-        var originalFoo = obj.foo;
+      it("sets the last namespace's value to the provided module", function () {
+        var module = {};
 
-        Structure.bind(obj);
+        Structure.registerModule("Foo.Bar.Baz", module);
 
-        expect(obj.foo).not.to.equal(originalFoo);
+        expect(root.Foo.Bar.Baz).to.equal(module);
       });
 
-      it("returns the original value when the wrapped function is called", function () {
-        Structure.bind(obj);
+      it("passes the registered module to the provided callback", function () {
+        var module, callback;
 
-        expect(obj.foo()).to.equal("foo");
-      });
+        module = {};
+        callback = this.spy();
 
-      it("does not affect non-function properties", function () {
-        var originalBar = obj.bar;
+        Structure.registerModule("Foo.Bar.Baz", module, callback);
 
-        Structure.bind(obj);
-
-        expect(obj.bar).to.equal(originalBar);
+        expect(callback).to.have.been.calledWith(module);
       });
     });
   });

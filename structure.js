@@ -1,9 +1,9 @@
 (function () {
-  var root, _bind, Structure;
+  var root, bind, bindAll, Structure;
 
   root = this;
 
-  _bind = Function.prototype.bind || function (obj) {
+  bind = Function.prototype.bind || function (obj) {
     var slice, target, args, bound;
 
     slice = Array.prototype.slice;
@@ -32,6 +32,16 @@
     return bound;
   };
 
+  bindAll = function (obj) {
+    var key;
+
+    for (key in obj) {
+      if (obj.hasOwnProperty(key) && typeof obj[key] == "function") {
+        obj[key] = bind.call(obj[key], obj);
+      }
+    }
+  };
+
   Structure = {
     init: function (namespace) {
       if (root.Structure) {
@@ -40,15 +50,29 @@
       }
     },
 
-    bind: function (obj) {
-      var key;
+    registerModule: function (namespaces, module, callback) {
+      var i, l, baseObj;
 
-      for (key in obj) {
-        if (obj.hasOwnProperty(key) && typeof obj[key] == "function") {
-          obj[key] = _bind.call(obj[key], obj);
+      baseObj = root;
+      namespaces = namespaces.split(/\./);
+      l = namespaces.length;
+
+      for (i = 0; i < l; i++) {
+        if (!baseObj[namespaces[i]]) {
+          if (i === l - 1 && module) {
+            baseObj[namespaces[i]] = module;
+          } else {
+            baseObj[namespaces[i]] = {};
+          }
         }
+
+        baseObj = baseObj[namespaces[i]];
       }
-    }
+
+      if (callback) {
+        callback(module);
+      }
+    },
   };
 
   root.Structure = Structure;
