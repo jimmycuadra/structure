@@ -1,14 +1,15 @@
 (function () {
-  var root, bind, bindAll, Structure;
+  var root, slice, bind, bindAll, Structure;
 
   root = this;
 
-  bind = Function.prototype.bind || function (obj) {
-    var slice, target, args, bound;
+  slice = Array.prototype.slice;
 
-    slice = Array.prototype.slice;
+  bind = Function.prototype.bind || function (obj) {
+    var target, args, bound;
+
     target = this;
-    args = Array.prototype.slice.call(arguments, 1);
+    args = slice.call(arguments, 1);
     bound = function () {
       var F, self;
 
