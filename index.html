@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Structure by jimmycuadra</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Structure</h1>
+          <h2>Add some basic structure to your client-side JavaScript.</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/jimmycuadra/structure/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/jimmycuadra/structure/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/jimmycuadra/structure" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>Structure</h1>
+
+<p><strong>Structure</strong> is a small library that encourages developers to better organize their client-side JavaScript code. It offers a single global variable under which an application's code should be contained, the ability to create namespaces under that global variable, and the ability to register reusable modules.</p>
+
+<h2>Usage</h2>
+
+<p>Include <code>structure.min.js</code> with a script tag. Although you can use <code>Structure</code> itself as your global namespace, you're encouraged to pick a name for your application. These examples will simply use <code>App</code>.</p>
+
+<div class="highlight"><pre><span class="nx">Structure</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="s2">"App"</span><span class="p">);</span>
+</pre></div>
+
+<p>The above call will remove <code>Structure</code> from the global namespace and re-add it as <code>App</code>.</p>
+
+<h3>Structure.registerModule</h3>
+
+<p>The <code>registerModule</code> method is used for generating namespaced modules. The first argument is a string representing the namespaces and module you're defining. If only one argument is passed, the module is created as an empty object.</p>
+
+<div class="highlight"><pre><span class="nx">App</span><span class="p">.</span><span class="nx">registerModule</span><span class="p">(</span><span class="s2">"App.Views.Comment"</span><span class="p">);</span>
+
+<span class="nx">App</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Comment</span><span class="p">;</span> <span class="c1">// empty object</span>
+</pre></div>
+
+<p>To populate the module in one shot, pass an object literal as the second argument.</p>
+
+<div class="highlight"><pre><span class="nx">App</span><span class="p">.</span><span class="nx">registerModule</span><span class="p">(</span><span class="s2">"App.Views.Comment"</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">validate</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">comment</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">comment</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">comment</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">App</span><span class="p">.</span><span class="nx">Views</span><span class="p">.</span><span class="nx">Comment</span><span class="p">.</span><span class="nx">validate</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">"Joe"</span><span class="p">,</span> <span class="nx">body</span><span class="o">:</span> <span class="s2">"Great post!"</span> <span class="p">});</span> <span class="c1">// true</span>
+</pre></div>
+
+<p>Structure will automatically <em>bind</em> all the functions in your module so that the value of <code>this</code> inside each method refers to the module itself.</p>
+
+<div class="highlight"><pre><span class="nx">App</span><span class="p">.</span><span class="nx">registerModule</span><span class="p">(</span><span class="s2">"App.Examples.Binding"</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">one</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">two</span><span class="p">;</span>
+  <span class="p">},</span>
+
+  <span class="nx">two</span><span class="o">:</span> <span class="s2">"woo!"</span>
+<span class="p">});</span>
+
+<span class="c1">// Using a module's method as a jQuery event handler</span>
+<span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s2">"example"</span><span class="p">,</span> <span class="nx">App</span><span class="p">.</span><span class="nx">Examples</span><span class="p">.</span><span class="nx">Binding</span><span class="p">.</span><span class="nx">one</span><span class="p">);</span>
+<span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">"example"</span><span class="p">);</span> <span class="c1">// "woo!"</span>
+</pre></div>
+
+<p><code>registerModule</code> also takes an optional callback function as a third parameter. This callback will be passed the newly registered module, so you can conveniently wire up your module's methods to elements/events in the DOM without having to reference the full namespace.</p>
+
+<div class="highlight"><pre><span class="nx">App</span><span class="p">.</span><span class="nx">registerModule</span><span class="p">(</span><span class="s2">"App.Form"</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">onClick</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Do something with a click event</span>
+  <span class="p">},</span>
+
+  <span class="nx">onSubmit</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Do something with a submit event</span>
+  <span class="p">}</span>
+<span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">module</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">form</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s2">"form"</span><span class="p">);</span>
+
+  <span class="nx">form</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">"click"</span><span class="p">,</span> <span class="nx">module</span><span class="p">.</span><span class="nx">onClick</span><span class="p">);</span>
+  <span class="nx">form</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">"submit"</span><span class="p">,</span> <span class="nx">module</span><span class="p">.</span><span class="nx">onSubmit</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+<h2>Advantages</h2>
+
+<p>While these simple examples may make it seem that Structure is unnecessary boilerplate, there are advantages to this approach.</p>
+
+<p>As your application grows, it's easier to maintain code when chunks of functionality are grouped into modules in an organized way. This organization also aids in understanding the system for new developers working on an existing code base (or the original developers trying to remember the purpose of some code they wrote months or years ago.)</p>
+
+<p>Putting methods in named properties helps communicate what they do. This is often not immediately clear if all of your application's behavior is inside anonymous functions passed to jQuery event binding functions. Should you decide to unit test your code (which you should), being able to reference individual methods this way is basically required.</p>
+
+<h2>Further reading</h2>
+
+<p>Structure was inspired by my blog post, <a href="http://jimmycuadra.com/posts/jquery-is-not-an-architecture">jQuery is not an architecture</a>.</p>
+        </section>
+
+        <footer>
+          Structure is maintained by <a href="https://github.com/jimmycuadra">jimmycuadra</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
