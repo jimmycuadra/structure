@@ -69,6 +69,8 @@
         baseObj = baseObj[namespaces[i]];
       }
 
+      bindAll(module);
+
       if (callback) {
         callback(module);
       }

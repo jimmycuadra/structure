@@ -83,6 +83,23 @@
 
         expect(callback).to.have.been.calledWith(module);
       });
+
+      it("binds all methods on the module to the module", function () {
+        var module, reference;
+
+        module = {
+          fn: function () {
+            return this.prop;
+          },
+
+          prop: "Win!"
+        };
+
+        Structure.registerModule("Foo.Bar.Baz", module);
+        reference = Foo.Bar.Baz.fn;
+
+        expect(reference()).to.equal("Win!");
+      });
     });
   });
 
