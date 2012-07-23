@@ -21,10 +21,6 @@
   });
 
   describe("Structure", function () {
-    it("exists", function () {
-      expect(Structure).not.to.be.undefined;
-    });
-
     describe(".init", function () {
       afterEach(function () {
         root.Structure = root.App;
