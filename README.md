@@ -4,7 +4,7 @@
 
 ## Usage
 
-Include `structure.js` with a script tag. Although you can use `Structure` itself as your global namespace, you're encouraged to pick a name for your application. These examples will simply use `App`.
+Include `structure.min.js` with a script tag. Although you can use `Structure` itself as your global namespace, you're encouraged to pick a name for your application. These examples will simply use `App`.
 
 ``` javascript
 Structure.init("App");
