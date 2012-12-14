@@ -1,4 +1,4 @@
-(function () {
+;(function () {
   var root, slice, bind, bindAll, Structure;
 
   root = this;
@@ -46,7 +46,12 @@
   Structure = {
     init: function (namespace) {
       if (root.Structure) {
-        delete root.Structure;
+        try {
+          delete root.Structure;
+        } catch (ex) {
+          root.Structure = undefined;
+        }
+
         root[namespace] = this;
       }
     },
